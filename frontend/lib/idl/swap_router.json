@@ -1,0 +1,390 @@
+{
+  "address": "AgcU7r6U5uPEfFccmhYdMLcjckADdfoJ8QcHCgkG74Zg",
+  "metadata": {
+    "name": "swap_router",
+    "version": "0.1.0",
+    "spec": "0.1.0"
+  },
+  "docs": [
+    "Swap Router Program"
+  ],
+  "instructions": [
+    {
+      "name": "execute_jupiter_swap",
+      "docs": [
+        "Execute a swap via Jupiter aggregator",
+        "All accounts and instruction data come from Jupiter API"
+      ],
+      "discriminator": [
+        0,
+        153,
+        94,
+        101,
+        168,
+        72,
+        220,
+        247
+      ],
+      "accounts": [
+        {
+          "name": "router_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  117,
+                  116,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User executing the swap"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "jupiter_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "jupiter_instruction_data",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "execute_vault_jupiter_swap",
+      "docs": [
+        "Execute swap using vault authority (for vault-owned funds)"
+      ],
+      "discriminator": [
+        221,
+        121,
+        16,
+        171,
+        53,
+        46,
+        160,
+        163
+      ],
+      "accounts": [
+        {
+          "name": "router_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  117,
+                  116,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_authority",
+          "docs": [
+            "Vault authority (PDA)"
+          ]
+        },
+        {
+          "name": "jupiter_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "jupiter_instruction_data",
+          "type": "bytes"
+        },
+        {
+          "name": "vault_seeds",
+          "type": {
+            "vec": "bytes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_stats",
+      "docs": [
+        "Get router statistics"
+      ],
+      "discriminator": [
+        241,
+        65,
+        112,
+        185,
+        230,
+        140,
+        139,
+        177
+      ],
+      "accounts": [
+        {
+          "name": "router_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  117,
+                  116,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [],
+      "returns": {
+        "defined": {
+          "name": "RouterStats"
+        }
+      }
+    },
+    {
+      "name": "initialize_router",
+      "docs": [
+        "Initialize the router state"
+      ],
+      "discriminator": [
+        115,
+        12,
+        152,
+        202,
+        152,
+        4,
+        87,
+        120
+      ],
+      "accounts": [
+        {
+          "name": "router_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  117,
+                  116,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "fee_rate_bps",
+          "type": "u16"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "RouterState",
+      "discriminator": [
+        141,
+        157,
+        194,
+        155,
+        75,
+        208,
+        200,
+        27
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 12000,
+      "name": "InvalidDexProgram",
+      "msg": "Invalid DEX program provided"
+    },
+    {
+      "code": 12001,
+      "name": "SwapFailed",
+      "msg": "Swap failed during execution"
+    },
+    {
+      "code": 12002,
+      "name": "InsufficientOutputAmount",
+      "msg": "Insufficient output amount"
+    },
+    {
+      "code": 12003,
+      "name": "PoolNotFound",
+      "msg": "Pool not found"
+    },
+    {
+      "code": 12004,
+      "name": "InvalidTokenPair",
+      "msg": "Invalid token pair"
+    },
+    {
+      "code": 12005,
+      "name": "SlippageExceeded",
+      "msg": "Slippage tolerance exceeded"
+    },
+    {
+      "code": 12006,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
+    },
+    {
+      "code": 12007,
+      "name": "InvalidFeeRate",
+      "msg": "Invalid fee rate - must be <= 1000 basis points"
+    },
+    {
+      "code": 12008,
+      "name": "MathOverflow",
+      "msg": "Math overflow occurred"
+    },
+    {
+      "code": 12009,
+      "name": "InvalidSwapAmount",
+      "msg": "Invalid swap amount - must be > 0"
+    },
+    {
+      "code": 12010,
+      "name": "InsufficientLiquidity",
+      "msg": "Pool reserves too low"
+    },
+    {
+      "code": 12011,
+      "name": "InvalidRoute",
+      "msg": "Invalid route - no path found"
+    },
+    {
+      "code": 12012,
+      "name": "RouterNotInitialized",
+      "msg": "Router not initialized"
+    },
+    {
+      "code": 12013,
+      "name": "PoolMismatch",
+      "msg": "Pool mismatch"
+    },
+    {
+      "code": 12014,
+      "name": "TokenMintMismatch",
+      "msg": "Token mint mismatch"
+    }
+  ],
+  "types": [
+    {
+      "name": "RouterState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_rate_bps",
+            "type": "u16"
+          },
+          {
+            "name": "total_swaps",
+            "type": "u64"
+          },
+          {
+            "name": "total_volume",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RouterStats",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_rate_bps",
+            "type": "u16"
+          },
+          {
+            "name": "total_swaps",
+            "type": "u64"
+          },
+          {
+            "name": "total_volume",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+}
